@@ -1,0 +1,14 @@
+{
+  "name": "emission",
+  "version": "0.0.1",
+  "type": "module",
+  "devDependencies": {
+    "esbuild": "^0.23.0",
+    "esbuild-plugin-tsc": "^0.4.0",
+    "typescript": "^5.5.3"
+  },
+  "scripts": {
+    "build": "node ./build/build.js",
+    "serve": "node ./build/serve.js"
+  }
+}
