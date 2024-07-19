@@ -10,5 +10,8 @@
   "scripts": {
     "build": "node ./build/build.js",
     "serve": "node ./build/serve.js"
+  },
+  "dependencies": {
+    "gl-matrix": "^3.4.3"
   }
 }
