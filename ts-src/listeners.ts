@@ -1,4 +1,4 @@
-import { Camera } from "./camera";
+import { Player } from "./objects/player";
 
 export function setupListeners(gl: WebGLRenderingContext) {
   setupResizeListener(gl);
@@ -36,8 +36,20 @@ function setupMouseListeners(element: Element) {
     }
 
     const sensitivity = 0.005;
-    Camera.rotateX(event.movementX * sensitivity);
-    Camera.rotateY(event.movementY * sensitivity);
+    Player.rotateX(-event.movementX * sensitivity);
+    Player.rotateY(-event.movementY * sensitivity);
+  });
+
+  element.addEventListener("wheel", (event) => {
+    if (!document.pointerLockElement) {
+      // effectively tabbed out
+      return;
+    }
+    if (!(event instanceof WheelEvent)) {
+      return;
+    }
+
+    Player.moveHeldObject(event.deltaY * 0.002);
   });
 }
 
@@ -53,16 +65,19 @@ function setupKeyboardListeners(element: Element) {
 
     switch (event.code) {
       case "KeyW":
-        Camera.moveForward();
+        Player.moveForward();
         break;
       case "KeyS":
-        Camera.moveBackward();
+        Player.moveBackward();
         break;
       case "KeyD":
-        Camera.moveRight();
+        Player.moveRight();
         break;
       case "KeyA":
-        Camera.moveLeft();
+        Player.moveLeft();
+        break;
+      case "KeyE":
+        Player.interact();
         break;
     }
   });
@@ -79,11 +94,11 @@ function setupKeyboardListeners(element: Element) {
     switch (event.code) {
       case "KeyW":
       case "KeyS":
-        Camera.stopLateralMovement();
+        Player.stopLateralMovement();
         break;
       case "KeyD":
       case "KeyA":
-        Camera.stopHorizontalMovement();
+        Player.stopHorizontalMovement();
         break;
     }
   });
