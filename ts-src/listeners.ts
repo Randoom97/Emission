@@ -79,6 +79,11 @@ function setupKeyboardListeners(element: Element) {
       case "KeyE":
         Player.interact();
         break;
+      case "KeyC":
+        Player.combine();
+        break;
+      case "KeyB":
+        Player.break();
     }
   });
 

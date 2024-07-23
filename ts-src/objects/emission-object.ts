@@ -34,7 +34,8 @@ export class EmissionObject {
     public position: vec3,
     public luminosity: Luminosity = Luminosity.Solid,
     public shape: Shape = Shape.Sphere,
-    private color: Color = Color.White
+    public color: Color = Color.White,
+    public componentObjects?: Set<EmissionObject>
   ) {}
 
   getColor(): vec3 {
