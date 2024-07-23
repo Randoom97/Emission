@@ -14,7 +14,7 @@ enum Lateral {
 }
 
 export class Player {
-  private static position: vec3 = vec3.fromValues(0, 1, 0);
+  private static position: vec3 = vec3.fromValues(0.05, 1, 0);
   static rotation: vec2 = vec2.create();
   private static heldObject: EmissionObject | undefined;
 

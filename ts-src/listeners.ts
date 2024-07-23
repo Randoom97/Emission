@@ -49,7 +49,7 @@ function setupMouseListeners(element: Element) {
       return;
     }
 
-    Player.moveHeldObject(event.deltaY * 0.002);
+    Player.moveHeldObject(-event.deltaY * 0.002);
   });
 }
 

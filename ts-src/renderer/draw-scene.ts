@@ -22,40 +22,76 @@ export function drawScene(gl: WebGLRenderingContext) {
   const projectionMatrix = mat4.create();
   mat4.perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar);
 
-  const modelViewMatrix = mat4.create();
-  mat4.rotate(modelViewMatrix, modelViewMatrix, -Player.rotation[1], [1, 0, 0]);
-  mat4.rotate(modelViewMatrix, modelViewMatrix, -Player.rotation[0], [0, 1, 0]);
+  const viewMatrix = mat4.create();
+  mat4.rotate(viewMatrix, viewMatrix, -Player.rotation[1], [1, 0, 0]);
+  mat4.rotate(viewMatrix, viewMatrix, -Player.rotation[0], [0, 1, 0]);
   // this is reversed because we're moving the world, not the player
   const reversePlayerPosition = vec3.create();
   vec3.scale(reversePlayerPosition, Player.getPosition(), -1);
-  mat4.translate(modelViewMatrix, modelViewMatrix, reversePlayerPosition);
+  mat4.translate(viewMatrix, viewMatrix, reversePlayerPosition);
 
-  gl.useProgram(RenderData.objectProgramInfo.program);
+  drawWorld(gl, projectionMatrix, viewMatrix);
+  drawObjects(gl, projectionMatrix, viewMatrix);
+}
 
-  gl.uniformMatrix4fv(
-    RenderData.objectProgramInfo.uniforms.projectionMatrix,
-    false,
-    projectionMatrix
-  );
-  gl.uniformMatrix4fv(
-    RenderData.objectProgramInfo.uniforms.modelViewMatrix,
-    false,
-    modelViewMatrix
-  );
+function drawWorld(
+  gl: WebGLRenderingContext,
+  projectionMatrix: mat4,
+  viewMatrix: mat4
+) {
+  gl.useProgram(RenderData.worldProgramInfo.program);
 
-  // draw the world
+  const uniforms = RenderData.worldProgramInfo.uniforms;
+  gl.uniformMatrix4fv(uniforms.projectionMatrix, false, projectionMatrix);
+  gl.uniformMatrix4fv(uniforms.viewMatrix, false, viewMatrix);
+
+  const allLights = [World.targetObject, ...World.buildingBlocks];
+
+  const lights: number[] = [];
+  allLights.forEach((item) => lights.push(...item.position));
+  gl.uniform3fv(uniforms.lightPositions, new Float32Array(lights));
+
+  const lightColors: number[] = [];
+  allLights.forEach((item) => lightColors.push(...item.getColor()));
+  gl.uniform3fv(uniforms.lightColors, new Float32Array(lightColors));
+
+  const lightLuminance = allLights.map((item) => item.luminosity);
+  gl.uniform1iv(uniforms.lightLuminance, new Int32Array(lightLuminance));
+
+  const lightShape = allLights.map((item) => item.shape);
+  gl.uniform1iv(uniforms.lightShape, new Int32Array(lightShape));
+
+  gl.uniform1i(uniforms.lightCount, lights.length / 3);
+
   bindObject(
     gl,
     RenderData.map,
-    RenderData.objectProgramInfo.attributes.vertexPosition
+    RenderData.worldProgramInfo.attributes.vertexPosition
   );
   drawObject(
     gl,
     RenderData.map.faceCount,
     vec3.create(),
     vec3.fromValues(4.5, 4.5, 4.5),
-    vec3.fromValues(0.4, 0.4, 0.45),
-    RenderData.objectProgramInfo
+    RenderData.worldProgramInfo
+  );
+}
+
+function drawObjects(
+  gl: WebGLRenderingContext,
+  projectionMatrix: mat4,
+  viewMatrix: mat4
+) {
+  gl.useProgram(RenderData.objectProgramInfo.program);
+  gl.uniformMatrix4fv(
+    RenderData.objectProgramInfo.uniforms.projectionMatrix,
+    false,
+    projectionMatrix
+  );
+  gl.uniformMatrix4fv(
+    RenderData.objectProgramInfo.uniforms.viewMatrix,
+    false,
+    viewMatrix
   );
 
   bindObject(
@@ -63,24 +99,25 @@ export function drawScene(gl: WebGLRenderingContext) {
     RenderData.sphere,
     RenderData.objectProgramInfo.attributes.vertexPosition
   );
+
   // draw the target object
+  gl.uniform3f(RenderData.objectProgramInfo.uniforms.color, 0.1, 0.1, 0.1);
   drawObject(
     gl,
     RenderData.sphere.faceCount,
     World.targetObject.position,
     sphereScale,
-    vec3.fromValues(0.1, 0.1, 0.1),
     RenderData.objectProgramInfo
   );
 
   // draw the building blocks
+  gl.uniform3f(RenderData.objectProgramInfo.uniforms.color, 1, 1, 1);
   for (let object of World.buildingBlocks) {
     drawObject(
       gl,
       RenderData.sphere.faceCount,
       object.position,
       sphereScale,
-      vec3.fromValues(1, 1, 1),
       RenderData.objectProgramInfo
     );
   }
@@ -102,7 +139,6 @@ function drawObject(
   faceCount: number,
   position: vec3,
   scale: vec3,
-  color: vec3,
   programInfo: ProgramInfo
 ) {
   const transformMatrix = mat4.create();
@@ -113,7 +149,5 @@ function drawObject(
     false,
     transformMatrix
   );
-
-  gl.uniform3fv(programInfo.uniforms.color, color);
   gl.drawElements(gl.TRIANGLES, faceCount, gl.UNSIGNED_SHORT, 0);
 }

@@ -12,6 +12,7 @@ export class RenderData {
   static sphere: GLObject;
 
   static objectProgramInfo: ProgramInfo;
+  static worldProgramInfo: ProgramInfo;
 
   static async init(gl: WebGLRenderingContext) {
     // So we don't flashbang users while stuff is loading
@@ -27,20 +28,56 @@ export class RenderData {
     this.objectProgramInfo = {
       program: objectProgram,
       attributes: {
-        vertexPosition: gl.getAttribLocation(objectProgram, "aVertexPosition"),
+        vertexPosition: gl.getAttribLocation(objectProgram, "vertexPosition"),
       },
       uniforms: {
         projectionMatrix: <WebGLUniformLocation>(
-          gl.getUniformLocation(objectProgram, "uProjectionMatrix")
+          gl.getUniformLocation(objectProgram, "projectionMatrix")
         ),
-        modelViewMatrix: <WebGLUniformLocation>(
-          gl.getUniformLocation(objectProgram, "uModelViewMatrix")
+        viewMatrix: <WebGLUniformLocation>(
+          gl.getUniformLocation(objectProgram, "viewMatrix")
         ),
         transformMatrix: <WebGLUniformLocation>(
           gl.getUniformLocation(objectProgram, "transformMatrix")
         ),
         color: <WebGLUniformLocation>(
           gl.getUniformLocation(objectProgram, "color")
+        ),
+      },
+    };
+
+    const worldProgram = <WebGLProgram>(
+      await createProgram(gl, "./shaders/world.vs", "./shaders/world.fs")
+    );
+    this.worldProgramInfo = {
+      program: worldProgram,
+      attributes: {
+        vertexPosition: gl.getAttribLocation(worldProgram, "vertexPosition"),
+      },
+      uniforms: {
+        projectionMatrix: <WebGLUniformLocation>(
+          gl.getUniformLocation(worldProgram, "projectionMatrix")
+        ),
+        viewMatrix: <WebGLUniformLocation>(
+          gl.getUniformLocation(worldProgram, "viewMatrix")
+        ),
+        transformMatrix: <WebGLUniformLocation>(
+          gl.getUniformLocation(worldProgram, "transformMatrix")
+        ),
+        lightPositions: <WebGLUniformLocation>(
+          gl.getUniformLocation(worldProgram, "lightPositions")
+        ),
+        lightColors: <WebGLUniformLocation>(
+          gl.getUniformLocation(worldProgram, "lightColors")
+        ),
+        lightLuminance: <WebGLUniformLocation>(
+          gl.getUniformLocation(worldProgram, "lightLuminance")
+        ),
+        lightShape: <WebGLUniformLocation>(
+          gl.getUniformLocation(worldProgram, "lightShape")
+        ),
+        lightCount: <WebGLUniformLocation>(
+          gl.getUniformLocation(worldProgram, "lightCount")
         ),
       },
     };
