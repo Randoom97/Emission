@@ -2,6 +2,7 @@ import { mat3, vec2, vec3 } from "gl-matrix";
 import { Color, EmissionObject, Luminosity, Shape } from "./emission-object";
 import { World } from "./world";
 import { raySphereIntersect } from "../helpers";
+import { DOMHandler } from "../dom-handler";
 
 enum Horizontal {
   Left,
@@ -221,6 +222,18 @@ export class Player {
     );
     World.buildingBlocks.push(...componentObjects);
     this.heldObject = undefined;
+  }
+
+  static submit() {
+    if (!this.heldObject) {
+      return;
+    }
+
+    if (this.heldObject.traitsEqual(World.targetObject)) {
+      DOMHandler.incrementScore();
+      World.init();
+      this.heldObject = undefined;
+    }
   }
 
   private static lookVector() {

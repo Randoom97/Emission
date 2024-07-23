@@ -15,7 +15,7 @@ const leftmostSpot = vec3.fromValues(2.5, 1, 2.85);
 
 export class World {
   static targetObject: EmissionObject;
-  static buildingBlocks: EmissionObject[] = [];
+  static buildingBlocks: EmissionObject[];
 
   static init() {
     this.targetObject = new EmissionObject(
@@ -24,6 +24,8 @@ export class World {
       Shape.Pyramid,
       Color.Red
     );
+
+    this.buildingBlocks = [];
     // this.initBuildingBlocks();
     this.initDebugBuildingBlocks();
   }

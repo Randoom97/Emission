@@ -1,3 +1,4 @@
+import { DOMHandler } from "./dom-handler";
 import { Player } from "./objects/player";
 
 export function setupListeners(gl: WebGLRenderingContext) {
@@ -84,6 +85,13 @@ function setupKeyboardListeners(element: Element) {
         break;
       case "KeyB":
         Player.break();
+        break;
+      case "KeyQ":
+        Player.submit();
+        break;
+      case "KeyH":
+        DOMHandler.toggleControls();
+        break;
     }
   });
 

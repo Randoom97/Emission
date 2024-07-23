@@ -50,4 +50,12 @@ export class EmissionObject {
         return vec3.fromValues(0, 0, 1);
     }
   }
+
+  traitsEqual(other: EmissionObject): boolean {
+    return (
+      this.luminosity === other.luminosity &&
+      this.shape === other.shape &&
+      this.color === other.color
+    );
+  }
 }

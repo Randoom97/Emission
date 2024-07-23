@@ -16,6 +16,7 @@ html {
 }
 
 .crosshair {
+    pointer-events: none;
     position: absolute;
     margin-left: 50vw;
     margin-top: 50vh;
@@ -25,5 +26,23 @@ html {
     border-radius: 4px;
     background-color: white;
     border: 1px solid black;
+    z-index: 1;
+}
+
+#score {
+    pointer-events: none;
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    color:white;
+    z-index: 1;
+}
+
+#controls {
+    pointer-events: none;
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    color: white;
     z-index: 1;
 }
