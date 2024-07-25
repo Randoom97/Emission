@@ -27,7 +27,11 @@ lowp float pyramidDist(lowp vec3 light, lowp vec3 pixel) {
     dist = max(dot(p, vec3(0.0, 0.9, 1.5)), dist);
     dist = max(dot(p, vec3(0.0, 0.9, -1.5)), dist);
     return max(dot(p, vec3(0.0, -1.5, 0.0)), dist);
+}
 
+lowp float cylinderDist(lowp vec3 light, lowp vec3 pixel) {
+    lowp vec3 p = pixel - light;
+    return max(abs(p.y), length(p.xz));
 }
 
 lowp float normalLuminance(lowp float dist) {
@@ -50,11 +54,20 @@ lowp float sawLuminance(lowp float dist) {
     return (dist - (period * floor(dist/period))) * 5.0;
 }
 
+lowp float inverseLuminance(lowp float dist) {
+    if (dist > 1.0) {
+        return 1.0;
+    }
+    return 0.0;
+}
+
 lowp float dist(lowp vec3 light, lowp vec3 pixel, int type) {
     if (type == 1) {
         return cubeDist(light, pixel);
     } else if (type == 2) {
         return pyramidDist(light, pixel);
+    } else if (type == 3) {
+        return cylinderDist(light, pixel);
     }
     return sphereDist(light, pixel);
 }
@@ -66,6 +79,8 @@ lowp float luminosity(lowp float d, int type) {
         return squareLuminance(d);
     } else if (type == 3) {
         return sawLuminance(d);
+    } else if (type == 4) {
+        return inverseLuminance(d);
     }
     return normalLuminance(d);
 }

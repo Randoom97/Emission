@@ -60,7 +60,7 @@ export class World {
 
     shuffle(basicProperties);
 
-    const bbToCreate = 6;
+    const bbToCreate = 8;
     while (toCreateSet.size < bbToCreate) {
       toCreateSet.add(basicProperties.pop()!);
     }
