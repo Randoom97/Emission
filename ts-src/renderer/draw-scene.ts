@@ -52,7 +52,7 @@ function drawWorld(
   gl.uniform3fv(uniforms.lightPositions, new Float32Array(lights));
 
   const lightColors: number[] = [];
-  allLights.forEach((item) => lightColors.push(...item.getColor()));
+  allLights.forEach((item) => lightColors.push(...item.color));
   gl.uniform3fv(uniforms.lightColors, new Float32Array(lightColors));
 
   const lightLuminance = allLights.map((item) => item.luminosity);
