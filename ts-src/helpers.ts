@@ -17,3 +17,15 @@ export function raySphereIntersect(
   if (d > radius) return false;
   return true;
 }
+
+/** Returns a random number between 0 and max (inclusive) */
+export function getRandomInt(max: number) {
+  return Math.floor(Math.random() * (max + 1));
+}
+
+export function shuffle<T>(list: T[]): void {
+  for (let i = list.length - 1; i > 0; i--) {
+    const j = getRandomInt(i);
+    [list[i], list[j]] = [list[j], list[i]];
+  }
+}
