@@ -18,6 +18,7 @@ export class Player {
   private static position: vec3 = vec3.fromValues(0.05, 1, 0);
   static rotation: vec2 = vec2.create();
   private static heldObject: EmissionObject | undefined;
+  private static lastStepTime: number;
 
   private static horizontalMovement: Horizontal | undefined;
   private static lateralMovement: Lateral | undefined;
@@ -47,7 +48,13 @@ export class Player {
   }
 
   static step() {
-    let speed = 0.07;
+    let delta = 16;
+    if (this.lastStepTime) {
+      const now = Date.now();
+      delta = now - this.lastStepTime;
+      this.lastStepTime = now;
+    }
+    let speed = 1 / delta;
 
     const movementVector = vec3.create();
     if (this.lateralMovement !== undefined) {
