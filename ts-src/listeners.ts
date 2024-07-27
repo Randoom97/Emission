@@ -106,12 +106,16 @@ function setupKeyboardListeners(element: Element) {
 
     switch (event.code) {
       case "KeyW":
+        Player.stopMovingForward();
+        break;
       case "KeyS":
-        Player.stopLateralMovement();
+        Player.stopMovingBackward();
         break;
       case "KeyD":
+        Player.stopMovingRight();
+        break;
       case "KeyA":
-        Player.stopHorizontalMovement();
+        Player.stopMovingLeft();
         break;
     }
   });

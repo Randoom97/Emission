@@ -4,47 +4,47 @@ import { World } from "./world";
 import { raySphereIntersect } from "../helpers";
 import { DOMHandler } from "../dom-handler";
 
-enum Horizontal {
-  Left,
-  Right,
-}
-
-enum Lateral {
-  Forward,
-  Backward,
-}
-
 export class Player {
   private static position: vec3 = vec3.fromValues(0.05, 1, 0);
   static rotation: vec2 = vec2.create();
   private static heldObject: EmissionObject | undefined;
   private static lastStepTime: number;
 
-  private static horizontalMovement: Horizontal | undefined;
-  private static lateralMovement: Lateral | undefined;
+  private static movingLeft: boolean;
+  private static movingRight: boolean;
+  private static movingForward: boolean;
+  private static movingBackward: boolean;
 
   static moveForward() {
-    this.lateralMovement = Lateral.Forward;
+    this.movingForward = true;
   }
 
   static moveBackward() {
-    this.lateralMovement = Lateral.Backward;
+    this.movingBackward = true;
   }
 
   static moveLeft() {
-    this.horizontalMovement = Horizontal.Left;
+    this.movingLeft = true;
   }
 
   static moveRight() {
-    this.horizontalMovement = Horizontal.Right;
+    this.movingRight = true;
   }
 
-  static stopLateralMovement() {
-    this.lateralMovement = undefined;
+  static stopMovingForward() {
+    this.movingForward = false;
   }
 
-  static stopHorizontalMovement() {
-    this.horizontalMovement = undefined;
+  static stopMovingBackward() {
+    this.movingBackward = false;
+  }
+
+  static stopMovingLeft() {
+    this.movingLeft = false;
+  }
+
+  static stopMovingRight() {
+    this.movingRight = false;
   }
 
   static step() {
@@ -57,11 +57,17 @@ export class Player {
     let speed = 1 / delta;
 
     const movementVector = vec3.create();
-    if (this.lateralMovement !== undefined) {
-      movementVector[2] = this.lateralMovement === Lateral.Forward ? -1 : 1;
+    if (this.movingForward) {
+      vec3.add(movementVector, movementVector, vec3.fromValues(0, 0, -1));
     }
-    if (this.horizontalMovement !== undefined) {
-      movementVector[0] = this.horizontalMovement === Horizontal.Left ? -1 : 1;
+    if (this.movingBackward) {
+      vec3.add(movementVector, movementVector, vec3.fromValues(0, 0, 1));
+    }
+    if (this.movingLeft) {
+      vec3.add(movementVector, movementVector, vec3.fromValues(-1, 0, 0));
+    }
+    if (this.movingRight) {
+      vec3.add(movementVector, movementVector, vec3.fromValues(1, 0, 0));
     }
 
     if (vec3.len(movementVector) == 0) {
