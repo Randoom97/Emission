@@ -5,6 +5,7 @@ import { World } from "../objects/world";
 import { ProgramInfo, RenderData } from "./render-data";
 
 const sphereScale = vec3.fromValues(0.1, 0.1, 0.1);
+const highlightStrength = 0.3;
 
 export function drawScene(gl: WebGLRenderingContext) {
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -83,16 +84,9 @@ function drawObjects(
   viewMatrix: mat4
 ) {
   gl.useProgram(RenderData.objectProgramInfo.program);
-  gl.uniformMatrix4fv(
-    RenderData.objectProgramInfo.uniforms.projectionMatrix,
-    false,
-    projectionMatrix
-  );
-  gl.uniformMatrix4fv(
-    RenderData.objectProgramInfo.uniforms.viewMatrix,
-    false,
-    viewMatrix
-  );
+  const uniforms = RenderData.objectProgramInfo.uniforms;
+  gl.uniformMatrix4fv(uniforms.projectionMatrix, false, projectionMatrix);
+  gl.uniformMatrix4fv(uniforms.viewMatrix, false, viewMatrix);
 
   bindObject(
     gl,
@@ -100,8 +94,16 @@ function drawObjects(
     RenderData.objectProgramInfo.attributes.vertexPosition
   );
 
+  const highlightObject =
+    !Player.getHeldObject() &&
+    World.objectAtRay(Player.getPosition(), Player.lookVector());
+
   // draw the target object
-  gl.uniform3f(RenderData.objectProgramInfo.uniforms.color, 0.1, 0.1, 0.1);
+  gl.uniform3f(uniforms.color, 0.1, 0.1, 0.1);
+  gl.uniform1f(
+    uniforms.highlight,
+    World.targetObject === highlightObject ? highlightStrength : 0.0
+  );
   drawObject(
     gl,
     RenderData.sphere.faceCount,
@@ -113,6 +115,10 @@ function drawObjects(
   // draw the building blocks
   gl.uniform3f(RenderData.objectProgramInfo.uniforms.color, 1, 1, 1);
   for (let object of World.buildingBlocks) {
+    gl.uniform1f(
+      uniforms.highlight,
+      object === highlightObject ? highlightStrength : 0.0
+    );
     drawObject(
       gl,
       RenderData.sphere.faceCount,

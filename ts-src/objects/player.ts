@@ -130,6 +130,10 @@ export class Player {
     }
   }
 
+  static getHeldObject() {
+    return this.heldObject;
+  }
+
   static interact() {
     if (this.heldObject) {
       this.heldObject = undefined;
@@ -252,7 +256,7 @@ export class Player {
     }
   }
 
-  private static lookVector() {
+  static lookVector() {
     const zero = vec3.create();
     const lookRay = vec3.fromValues(0, 0, -1);
     vec3.rotateX(lookRay, lookRay, zero, this.rotation[1]);

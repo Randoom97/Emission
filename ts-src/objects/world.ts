@@ -41,12 +41,23 @@ export class World {
   }
 
   static objectAtRay(origin: vec3, lookRay: vec3) {
+    let objects = [];
     for (let object of [World.targetObject, ...World.buildingBlocks]) {
       if (raySphereIntersect(origin, lookRay, object.position, 0.1)) {
-        return object;
+        objects.push(object);
       }
     }
-    return undefined;
+    if (objects.length === 0) {
+      return undefined;
+    }
+    const distances = objects.map((object) => {
+      const distanceVector = vec3.create();
+      vec3.subtract(distanceVector, object.position, origin);
+      return [vec3.length(distanceVector), object];
+    });
+
+    distances.sort();
+    return distances[0][1] as EmissionObject;
   }
 
   static generateTargetProperties() {

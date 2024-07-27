@@ -43,6 +43,9 @@ export class RenderData {
         color: <WebGLUniformLocation>(
           gl.getUniformLocation(objectProgram, "color")
         ),
+        highlight: <WebGLUniformLocation>(
+          gl.getUniformLocation(objectProgram, "highlight")
+        ),
       },
     };
 
