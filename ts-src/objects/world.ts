@@ -8,7 +8,7 @@ import {
   Shape,
   ShapeValues,
 } from "./emission-object";
-import { getRandomInt, shuffle } from "../helpers";
+import { getRandomInt, raySphereIntersect, shuffle } from "../helpers";
 
 const targetPosition = vec3.fromValues(0.05, 1, -2.7);
 const rightmostSpot = vec3.fromValues(-2.4, 1, 2.85);
@@ -38,6 +38,15 @@ export class World {
     this.buildingBlocks = [];
     this.initBuildingBlocks();
     // this.initDebugBuildingBlocks();
+  }
+
+  static objectAtRay(origin: vec3, lookRay: vec3) {
+    for (let object of [World.targetObject, ...World.buildingBlocks]) {
+      if (raySphereIntersect(origin, lookRay, object.position, 0.1)) {
+        return object;
+      }
+    }
+    return undefined;
   }
 
   static generateTargetProperties() {

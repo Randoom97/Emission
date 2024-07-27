@@ -41,6 +41,22 @@ function setupMouseListeners(element: Element) {
     Player.rotateY(-event.movementY * sensitivity);
   });
 
+  element.addEventListener("pointerdown", (event) => {
+    if (!document.pointerLockElement) {
+      // effectively tabbed out
+      return;
+    }
+    if (!(event instanceof PointerEvent)) {
+      return;
+    }
+
+    if (event.button === 0) {
+      Player.interact();
+    } else {
+      Player.submit();
+    }
+  });
+
   element.addEventListener("wheel", (event) => {
     if (!document.pointerLockElement) {
       // effectively tabbed out

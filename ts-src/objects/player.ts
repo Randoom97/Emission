@@ -131,18 +131,14 @@ export class Player {
   }
 
   static interact() {
-    const lookRay = this.lookVector();
-
     if (this.heldObject) {
       this.heldObject = undefined;
       return;
     }
 
-    for (let object of [World.targetObject, ...World.buildingBlocks]) {
-      if (raySphereIntersect(this.position, lookRay, object.position, 0.1)) {
-        this.heldObject = object;
-        return;
-      }
+    const object = World.objectAtRay(this.position, this.lookVector());
+    if (object !== undefined) {
+      this.heldObject = object;
     }
   }
 
@@ -238,11 +234,18 @@ export class Player {
   }
 
   static submit() {
+    let object;
     if (!this.heldObject) {
+      object = World.objectAtRay(this.position, this.lookVector());
+    } else {
+      object = this.heldObject;
+    }
+
+    if (object === undefined || object === World.targetObject) {
       return;
     }
 
-    if (this.heldObject.traitsEqual(World.targetObject)) {
+    if (object.traitsEqual(World.targetObject)) {
       DOMHandler.incrementScore();
       World.init();
       this.heldObject = undefined;
