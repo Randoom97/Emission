@@ -19,21 +19,33 @@ export class World {
   static buildingBlocks: EmissionObject[];
 
   static init() {
-    const targetLuminosity =
-      LuminosityValues[getRandomInt(LuminosityValues.length - 1)];
-    const targetShape = ShapeValues[getRandomInt(ShapeValues.length - 1)];
-    const targetColor = ColorValues[getRandomInt(ColorValues.length - 1)];
+    let targetProperties = this.generateTargetProperties();
+    while (
+      (targetProperties.color === Color.White &&
+        targetProperties.luminosity == Luminosity.Solid,
+      targetProperties.shape === Shape.Sphere)
+    ) {
+      targetProperties = this.generateTargetProperties();
+    }
 
     this.targetObject = new EmissionObject(
       vec3.clone(targetPosition),
-      targetLuminosity,
-      targetShape,
-      targetColor
+      targetProperties.luminosity,
+      targetProperties.shape,
+      targetProperties.color
     );
 
     this.buildingBlocks = [];
     this.initBuildingBlocks();
     // this.initDebugBuildingBlocks();
+  }
+
+  static generateTargetProperties() {
+    return {
+      luminosity: LuminosityValues[getRandomInt(LuminosityValues.length - 1)],
+      shape: ShapeValues[getRandomInt(ShapeValues.length - 1)],
+      color: ColorValues[getRandomInt(ColorValues.length - 1)],
+    };
   }
 
   static initBuildingBlocks() {
@@ -116,8 +128,7 @@ export class World {
       color: Color.White,
     };
 
-    const objects = [];
-    objects.push({ ...defaultPropertySet });
+    const objects: Array<typeof defaultPropertySet> = [];
     LuminosityValues.filter((value) => value !== Luminosity.Solid).forEach(
       (value) => objects.push({ ...defaultPropertySet, luminosity: value })
     );
